@@ -7,6 +7,8 @@ def load_and_clean_data(uploaded_file):
     df["FactValueNumeric"] = pd.to_numeric(df["FactValueNumeric"], errors="coerce")  # fix value column[file:16]
     
     # Filter latest + select YOUR columns[file:16]
+    # Convert IsLatestYear to string and strip whitespace to handle formatting issues
+    df["IsLatestYear"] = df["IsLatestYear"].astype(str).str.strip().str.lower()
     df_clean = df[df["IsLatestYear"] == "true"].dropna(subset=["FactValueNumeric"])
     df_clean = df_clean[["ParentLocation", "Location", "Dim1", "FactValueNumeric"]].copy()
     df_clean.columns = ["category", "sub_category", "stack_col", "value"]  # rename for plot
@@ -15,7 +17,7 @@ def load_and_clean_data(uploaded_file):
 
 st.set_page_config(page_title="Stacked Bar Example", layout="wide")
 
-st.title("Interactive Stacked Bar Chart")
+st.title("Interactive Charts")
 
 # Sidebar file input
 uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
