@@ -236,4 +236,4 @@ if uploaded_file is not None:
   except Exception as e:
     st.error(f"Error: {e}")
 else:
-    st.info("Upload Data_water.csv in the sidebar to see the chart (uses ParentLocation as category, Dim1 as stack by default).")
+    st.info("Upload Data_water.csv in the sidebar to see the chart.")
