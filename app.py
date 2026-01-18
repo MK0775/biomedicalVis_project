@@ -4,6 +4,7 @@ import pandas as pd
 
 def load_and_clean_data(uploaded_file):
     df = pd.read_csv(uploaded_file)
+    df = df.dropna(axis=1, how='all')
     df["FactValueNumeric"] = pd.to_numeric(df["FactValueNumeric"], errors="coerce")
     
     df["IsLatestYear"] = df["IsLatestYear"].astype(str).str.strip().str.lower()
@@ -32,7 +33,7 @@ if uploaded_file is not None:
     tab1, tab2, tab3, tab4 = st.tabs(["Stacked bar", "Heatmap Matrix", "Waterdrop", "About"])
     with tab1:
     # Stacked bar 
-        cat1 = st.selectbox("X-axis", df.columns.tolist)
+        cat1 = st.selectbox("X-axis", df.columns.tolist())
         stack1 = st.selectbox("Color", df.columns.tolist())
         val1 = st.selectbox("Y-value", df.select_dtypes(include=['number']).columns.tolist())
 
