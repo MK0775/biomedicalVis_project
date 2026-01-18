@@ -76,10 +76,31 @@ if uploaded_file is not None:
 
 
     with tab4:
-        st.info("To be implemented.")
-        cat4 = st.selectbox("X-axis", df.columns.tolist(), key="tab4_cat")
-        stack4 = st.selectbox("Color", df.columns.tolist(), key="tab4_stack")
-        val4 = st.selectbox("Y-value", df.select_dtypes(include=['number']).columns.tolist(), key="tab4_val")
+        years= sorted(df['Period'].unique())
+        if len(years) > 1:
+            selected_year = st.slider("Select Year", min_value=years[0], max_value=years[-1],step=1 )
+        else: 
+           selected_year = years[0]
+
+        df_year = df[df['Period'] == selected_year].copy()
+
+        df_mapped = df_year.groupby('SpatialDimValueCode')['FactValueNumeric'].mean().reset_index()
+        df_mapped.columns = ['SpatialDimValueCode', 'FactValueNumeric']
+
+        fig_map = px.choropleth(
+            df_mapped,
+            locations="SpatialDimValueCode",
+            color="FactValueNumeric",
+            title=f"Water accessibilty for Year {selected_year}",
+            hover_name="SpatialDimValueCode",
+            color_continuous_scale="RdYlGn",
+            labels={"FactValueNumeric": "Access (%)"}
+        )
+
+        st.subheader("Choropleth Map")
+        st.plotly_chart(fig_map, use_container_width=True)
+
+        st.write("Countries for map:", df_mapped[:56])  # Debugging
 
 
   except Exception as e:
