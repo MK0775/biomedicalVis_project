@@ -11,6 +11,10 @@ def load_and_clean_data(uploaded_file):
     df["IsLatestYear"] = df["IsLatestYear"].astype(str).str.strip().str.lower()
     df_clean = df[df["IsLatestYear"] == "true"].dropna(subset=["FactValueNumeric"])
     df_clean = df_clean[["ParentLocation", "Location", "Dim1", "FactValueNumeric"]].copy()
+    
+    # Aggregate by ParentLocation, Location, and Dim1 (take mean if multiple values)
+    df_clean = df_clean.groupby(["ParentLocation", "Location", "Dim1"], as_index=False)["FactValueNumeric"].mean()
+    
     df_clean.columns = ["category", "sub_category", "stack_col", "value"]  # rename for plot
     return df_clean
 
@@ -54,10 +58,12 @@ if uploaded_file is not None:
 
     # Better layout
     fig.update_layout(
-        xaxis_title=category_col,
-        yaxis_title=value_col,
+        xaxis_title="regions",
+        yaxis_title="value in %",
         legend_title=subcategory_col,
-        height=600
+        height=600,
+        yaxis=dict(range=[0, 100], tickmode='linear', dtick=10),  
+        barnorm='percent'  
     )
 
     # Display interactive chart in browser
