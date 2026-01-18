@@ -4,18 +4,12 @@ import pandas as pd
 
 def load_and_clean_data(uploaded_file):
     df = pd.read_csv(uploaded_file)
-    df["FactValueNumeric"] = pd.to_numeric(df["FactValueNumeric"], errors="coerce")  # fix value column[file:16]
+    df["FactValueNumeric"] = pd.to_numeric(df["FactValueNumeric"], errors="coerce")
     
-    # Filter latest + select YOUR columns[file:16]
-    # Convert IsLatestYear to string and strip whitespace to handle formatting issues
     df["IsLatestYear"] = df["IsLatestYear"].astype(str).str.strip().str.lower()
     df_clean = df[df["IsLatestYear"] == "true"].dropna(subset=["FactValueNumeric"])
-    df_clean = df_clean[["ParentLocation", "Location", "Dim1", "FactValueNumeric"]].copy()
     
-    # Aggregate by ParentLocation, Location, and Dim1 (take mean if multiple values)
-    df_clean = df_clean.groupby(["ParentLocation", "Location", "Dim1"], as_index=False)["FactValueNumeric"].mean()
-    
-    df_clean.columns = ["category", "sub_category", "stack_col", "value"]  # rename for plot
+
     return df_clean
 
 
@@ -34,42 +28,48 @@ if uploaded_file is not None:
     st.subheader("Cleaned Data Preview")
     st.dataframe(df.head())
 
-    # Optional: allow user to pick columns (with defaults for your data)
-    category_col = st.sidebar.selectbox(
-        "Category (x-axis)", options=df.columns, index=df.columns.get_loc("category")
-    )
-    subcategory_col = st.sidebar.selectbox(
-        "Stack (color)", options=df.columns, index=df.columns.get_loc("stack_col")
-    )
-    value_col = st.sidebar.selectbox(
-        "Value (height)", options=df.columns[df.columns.str.contains("value")], index=0
-    )
 
-    # Stacked bar chart
-    fig = px.bar(
-        df,
-        x=category_col,
-        y=value_col,
-        color=subcategory_col,
-        barmode="stack", 
-        hover_data=df.columns, 
-        title="Stacked Bar Chart (ParentLocation vs Location/Dim1)",
-    )
+    tab1, tab2, tab3, tab4 = st.tabs(["Stacked bar", "Heatmap Matrix", "Waterdrop", "About"])
+    with tab1:
+    # Stacked bar 
+        cat1 = st.selectbox("X-axis", df.columns.tolist)
+        stack1 = st.selectbox("Color", df.columns.tolist())
+        val1 = st.selectbox("Y-value", df.select_dtypes(include=['number']).columns.tolist())
 
-    # Better layout
-    fig.update_layout(
-        xaxis_title="regions",
-        yaxis_title="value in %",
-        legend_title=subcategory_col,
-        height=600,
-        yaxis=dict(range=[0, 100], tickmode='linear', dtick=10),  
-        barnorm='percent'  
-    )
+        fig = px.bar(
+            df,
+            x=cat1,
+            y=val1,
+            color=stack1,
+            barmode="stack", 
+            hover_data=df.columns, 
+            title=f"Plotting: {cat1} vs {stack1} / {val1}"        
+            )
 
-    # Display interactive chart in browser
-    st.subheader("Stacked Bar Visualization")
-    st.plotly_chart(fig, use_container_width=True)
+        # Better layout
+        fig.update_layout(
+            xaxis_title="regions",
+            yaxis_title="value in %",
+            legend_title="colour legend",
+            height=600,
+            yaxis=dict(range=[0, 100], tickmode='linear', dtick=10),  
+            barnorm='percent'  
+        )
 
+        # Display interactive chart in browser
+        st.subheader("Stacked Bar Visualization")
+        st.plotly_chart(fig, use_container_width=True)
+
+    with tab2:
+        st.subheader("Cleaned Data")
+        st.dataframe(df)
+
+    with tab3:
+        st.subheader("Cleaned Data")
+        st.dataframe(df)
+    with tab4:
+        st.subheader("Cleaned Data")
+        st.dataframe(df)
   except Exception as e:
     st.error(f"Error: {e}")
 else:
