@@ -62,15 +62,26 @@ if uploaded_file is not None:
         st.plotly_chart(fig, use_container_width=True)
 
     with tab2:
-        st.subheader("Cleaned Data")
-        st.dataframe(df)
+        st.info("Heatmap to be implemented.")
+        cat2 = st.selectbox("X-axis", df.columns.tolist(), key="tab2_cat")
+        stack2 = st.selectbox("Color", df.columns.tolist(), key="tab2_stack")
+        val2 = st.selectbox("Y-value", df.select_dtypes(include=['number']).columns.tolist(), key="tab2_val")
+
 
     with tab3:
-        st.subheader("Cleaned Data")
-        st.dataframe(df)
+        st.info("Waterdrop chart to be implemented.")
+        cat3 = st.selectbox("X-axis", df.columns.tolist(), key="tab3_cat")
+        stack3 = st.selectbox("Color", df.columns.tolist(), key="tab3_stack")
+        val3 = st.selectbox("Y-value", df.select_dtypes(include=['number']).columns.tolist(), key="tab3_val")
+
+
     with tab4:
-        st.subheader("Cleaned Data")
-        st.dataframe(df)
+        st.info("To be implemented.")
+        cat4 = st.selectbox("X-axis", df.columns.tolist(), key="tab4_cat")
+        stack4 = st.selectbox("Color", df.columns.tolist(), key="tab4_stack")
+        val4 = st.selectbox("Y-value", df.select_dtypes(include=['number']).columns.tolist(), key="tab4_val")
+
+
   except Exception as e:
     st.error(f"Error: {e}")
 else:
