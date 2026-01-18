@@ -1,3 +1,6 @@
 streamlit
 pandas
 plotly
+vega_datasets
+pycountry
+seaborn
