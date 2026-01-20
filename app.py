@@ -22,6 +22,8 @@ def load_and_clean_data_water(df):
     df["IsLatestYear"] = df["IsLatestYear"].astype(str).str.strip().str.lower()
     df["IsLatestYear"] = df["IsLatestYear"].astype(str).str.strip().str.lower()
     return df
+
+#helper method generated with AI
 def ultimate_csv_loader(uploaded_file):
     try:
         return pd.read_csv(uploaded_file, on_bad_lines='skip', engine='python')
@@ -43,7 +45,7 @@ def load_and_clean_data(uploaded_file):
     try:
         df = ultimate_csv_loader(uploaded_file)
 
-        if uploaded_file.name == "Data_water.csv":
+        if uploaded_file.name == "Data_water.csv" or  uploaded_file.name=="data_water":
             return load_and_clean_data_water(df)
 
         if df.empty:
