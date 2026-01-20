@@ -118,9 +118,12 @@ if uploaded_files:
         tab1, tab2, tab3, tab4 = st.tabs(["Stacked bar", "Heatmap Matrix", "Waterdrop", "Chloropeth"])
         with tab1:
         # Stacked bar
+            all_cols = df.columns.tolist()
+            numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
+
             cat1 = st.selectbox("X-axis", df.columns.tolist())
             stack1 = st.selectbox("Color", df.columns.tolist())
-            val1 = st.selectbox("Y-value", df.select_dtypes(include=['number']).columns.tolist())
+            val1 = st.selectbox("Y-value", numeric_cols + all_cols,  format_func=lambda x: f"📊 {x} (num)" if x in numeric_cols else f"📄 {x} (str)")
 
             fig = px.bar(
                 df,
