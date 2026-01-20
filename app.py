@@ -51,7 +51,7 @@ if uploaded_file is not None:
     res_col = 'Dim1' if 'Dim1' in df_merged.columns else 'Location type'
 
     st.subheader("Cleaned Data Preview")
-    st.dataframe(df.head())
+    st.dataframe(df)
 
 
     tab1, tab2, tab3, tab4 = st.tabs(["Stacked bar", "Heatmap Matrix", "Waterdrop", "Chloropeth"])
